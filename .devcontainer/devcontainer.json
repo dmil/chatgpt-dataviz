@@ -11,7 +11,8 @@
 				"ms-python.python",
 				"ms-python.vscode-pylance",
 				"cweijan.vscode-office",
-				"ms-toolsai.jupyter"
+				"ms-toolsai.jupyter",
+				"REditorSupport.r"
 			]
 		}
 	},
