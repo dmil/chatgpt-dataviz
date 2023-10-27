@@ -4,10 +4,5 @@ Data Visualization Lesson with ChatGPT
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dmil/chatgpt-dataviz)
 
-TODO: 
-
-* [ ] Link slides
-* [ ] Update Docker Setup
-* [ ] Make README with clear instructions (and codespace button)
-* [ ] Make Notebook 1,2 and 3
-
+## Additional Links
+*  [Today's Slides](https://docs.google.com/presentation/d/1M1PTIF5iOvvmfWOn5MZvRPWKZnUfIdoDE7wmExtdiIA/edit#slide=id.g2931b9f6e1f_0_37)
