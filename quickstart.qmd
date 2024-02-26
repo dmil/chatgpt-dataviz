@@ -9,106 +9,41 @@ editor: visual
 cache: false
 ---
 
-## Python + R
-
-A workflow for using Python and R in the same quarto notebook!
-
-GitHub Repo: <https://github.com/dmil/quarto-quickstart>
-
-> Prefer to work in Jupyter notebooks? Check out this [alternate setup](https://github.com/dmil/jupyter-quickstart) that allows you to use Python and R together in a Jupyter notebook.
-
-## Installation
-
-When you run this notebook, it should ask to install the `reticulate` package. Once that is installed correctly, you should be able to run both R and Python cells.
-
-⚠️ **Caveat:** to make this work, you may need to re-install Python.
-
-This setup only works if Python was installed with the `--enable-shared` option. I had to first uninstall python and then re-install it with the `--enable-shared` option. Since I use pyenv, I installed it as follows:
-
-    env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.11.2
-
-## Setup
-
-**Note**: The following cell creates a python virtualenv, installs some packages (like `pandas` and `scikit-learn`).
-
-<https://rstudio.github.io/reticulate/articles/versions.html>
-
-```{r output=FALSE}
-
-library(reticulate)
-
-venv_path <- paste0(getwd(), '/.venv')
-
-# create virtualenv and install python libraries
-python_libraries <- c("pandas", "scikit-learn")
-virtualenv_create(venv_path, packages=python_libraries)
-
-# use virtualenv
-use_virtualenv(venv_path, required=TRUE)
-
+## Load Data
+```{r}
+library(tidyverse)
+polling_data <- read_csv("president_primary_polls.csv",
+                         col_types=cols(end_date = col_date("%m/%d/%y")))
 ```
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code.
-
-You can embed R code like this:
-
-```{r output=FALSE}
-# Imports in R
-require('tidyverse')
-```
-
-And python code like this:
-
-```{python output=FALSE}
-# Imports in Python
-import pandas as pd
-import numpy as np
-```
-
-## Sharing variables between Python and R
-
-The following code defines a dataframe `df` in Python with random data points.
-
-```{python}
-# create a dataframe of random numbers with two columns, A and B
-df = pd.DataFrame(
-    np.random.randint(0,100,size=(100, 2)), columns=list('AB'))
-
-# display first 5 rows
-df.head(5)
-
-```
-
-The following is an R cell. The `df` variable defined above is available as `py$df`. Python variables should be accessible in R prefixed with `py$` .
+## Filter to South Carolina
 
 ```{r}
-title <- "Random points plotted"
-
-ggplot(py$df) +
-    aes(x=A, y=B) +
-    geom_point() +
-    theme_minimal() +
-    ggtitle(title)
+sc_polls <- polling_data %>%
+  filter(state == "South Carolina") %>%
+  filter(party == "REP") %>%
+  filter(candidate_name == "Donald Trump")
 ```
 
-R variables should be accessible in Python prefixed with `r.`
+## Plot
 
-```{python}
-r.title
+```{r}
+
+# read dates correctly
+sc_polls$end_date <- as.Date(sc_polls$end_date)
+
+ggplot(sc_polls) +
+  geom_point() +
+  aes(x = end_date, y = pct) + 
+  # set y axis from 0 to 100
+  scale_y_continuous(limits = c(0, 100)) +
+  geom_smooth() +
+  labs(title = "Donald Trump's Polling in South Carolina",
+       x = "Date",
+       y = "Polling Percentage") + 
+  theme_minimal() + 
+  theme(
+    # turn it sideways
+    axis.text.x = element_text(angle = 90, hjust = 1)
+  )
 ```
-
-See the [reticulate cheat sheet](https://ugoproto.github.io/ugo_r_doc/pdf/reticulate.pdf) for more details on how to use Python and R together.
-
-## Why I like this setup
-
--   It lets me do some things in Python (hitting APIs, scraping, etc)
-
--   It lets do other things in R (statistical calculations, visualization, etc)
-
--   I have found it useful to learn R (or Python) while on deadline. When I was learning R it allowed me to switch back to Python if I was stuck on a step and the deadline was approaching, and then switch back to R to finish up.
-
--   I have also found it helpful for teaching R to students who are already familiar with Python. I'm sure it can also be used well for the reverse.
-
--   If your code starts to get complicated, you can move Python functions into `.py` files in the repo and then call those functions from the notebook. You can also define functions in R and save them into a `.R` file which you can call from this notebook. Storing code away in functions in separate files let me keep the notebooks very clean and readable and proved to be a good way to annotate my process for the quantitative edit.
