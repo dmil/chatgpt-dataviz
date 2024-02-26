@@ -3,8 +3,8 @@ library(tidyverse)
 library(ggplot2)
 
 # Read the data
-polling_data <- read.csv("president_primary_polls.csv")
-
+polling_data <- read_csv("president_primary_polls.csv",
+                         col_types=cols(end_date = col_date("%m/%d/%y")))
 # INSTRUCTIONS
 # ------------
 # Prompt ChatGPT to use the data in the file above to
